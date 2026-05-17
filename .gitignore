@@ -4,3 +4,6 @@ __venv__
 __pycache__
 *.mp4
 .DS_Store
+*_*.json
+*.srt
+*.vtt

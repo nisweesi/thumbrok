@@ -28,14 +28,14 @@ def transcribe(filename: str):
                 index=i + 1,
                 start=timedelta(seconds=round(seg["start"], 3)),
                 end=timedelta(seconds=round(seg["end"], 3)),
-                content=seg["text"],
+                content=segment["content"],
             )
         )
 
     transcript_json = {
         "filename": filename,
         "language": result.get("language"),
-        "text": result.get("text", "").strip(),
+        "content": result.get("text", "").strip(),
         "segments": segments,
     }
 

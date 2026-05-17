@@ -1,6 +1,7 @@
-import json
 import subprocess
 from pathlib import Path
+
+from models import MomentWithImage
 
 
 def take_snippet(start: float, end: float, filename: str) -> str:
@@ -12,9 +13,13 @@ def take_snippet(start: float, end: float, filename: str) -> str:
     mid = (start + end) / 2.0
     # Format time as seconds with millisecond precision
     mid_str = f"{mid:.3f}"
-    # Prepare output filename: <video_stem>_<mid>.jpg
     base = Path(filename).stem
-    output = f"{base}_{mid_str}.jpg"
+
+    output_dir = Path("frames")
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    output = output_dir / f"{base}_{mid_str}.jpg"
+
     # Build ffmpeg command to capture one frame
     cmd = [
         "ffmpeg",
@@ -34,34 +39,30 @@ def take_snippet(start: float, end: float, filename: str) -> str:
     ]
     # Execute ffmpeg and raise on failure
     subprocess.run(cmd, check=True)
-    return output
+    return str(output)
 
 
 # loop through the json and take a sinppet in the middle second between the start and end point
-def take_snippets(moments_json, filename: str) -> list[str]:
+def take_snippets(moments_response, filename: str) -> list[MomentWithImage]:
     """
     Given a moments JSON (path or dict) and a video filename,
     extract one screenshot per moment at the midpoint time.
     Returns list of output image filenames.
     """
-    # Load JSON data if a file path is provided
-    if isinstance(moments_json, str):
-        with open(moments_json, "r", encoding="utf-8") as f:
-            data = json.load(f)
-    else:
-        data = moments_json
-    moments = data.get("moments", [])
-    outputs: list[str] = []
-    for moment in moments:
-        start = moment.get("start")
-        end = moment.get("end")
-        # Validate times
-        if start is None or end is None:
-            continue
-        try:
-            img = take_snippet(float(start), float(end), filename)
-            outputs.append(img)
-        except Exception:
-            # Skip failed snippets
-            continue
-    return outputs
+    moments_with_images = []
+
+    for moment in moments_response.moments:
+        image_path = take_snippet(start=moment.start, end=moment.end, filename=filename)
+
+        moments_with_images.append(
+            MomentWithImage(
+                start=moment.start,
+                end=moment.end,
+                reason=moment.reason,
+                thumbnail_text=moment.thumbnail_text,
+                visual_idea=moment.visual_idea,
+                image_path=image_path,
+            )
+        )
+
+    return moments_with_images

@@ -22,11 +22,17 @@ class TranscriptionFormat(BaseModel):
     )
 
 
-class Moment(BaseModel):
+class MomentCandidate(BaseModel):
     start: float = Field(..., description="Start time of the moment in seconds")
     end: float = Field(..., description="End time of the moment in seconds")
-    content: str = Field(
+    reason: str = Field(
         ..., description="Brief description or rationale for the selected moment"
+    )
+    thumbnail_text: str = Field(
+        ..., description="Short thumbnail text for the thumbnail"
+    )
+    visual_idea: str = Field(
+        ..., description="Suggested visual direction for the thumbnail"
     )
 
 
@@ -36,4 +42,44 @@ class MomentsResponseFormat(BaseModel):
     """
 
     video_topic: str = Field(..., description="Topic or subject of the video")
-    moments: List[Moment] = Field(..., description="List of selected viral moments")
+    moments: List[MomentCandidate] = Field(
+        ..., description="List of selected viral moments"
+    )
+
+
+class MomentWithImage(BaseModel):
+    start: float
+    end: float
+    reason: str
+    image_path: str
+    thumbnail_text: str = Field(
+        ..., description="Short thumbnail text for the thumbnail"
+    )
+    visual_idea: str = Field(
+        ..., description="Suggested visual direction for the thumbnail"
+    )
+
+
+class MomentWithPrompt(BaseModel):
+    start: float
+    end: float
+    reason: str
+    image_path: str
+    image_prompt: str
+    thumbnail_text: str = Field(
+        ..., description="Short thumbnail text for the thumbnail"
+    )
+    visual_idea: str = Field(
+        ..., description="Suggested visual direction for the thumbnail"
+    )
+
+
+class SnippetFormat(BaseModel):
+    image_path: str
+
+
+class SnippetResponseFormat(BaseModel):
+    image_prompt: str = Field(
+        ...,
+        description="the prompt that will be sent to Grok Imagine with the snippet to generate the thumbnail",
+    )

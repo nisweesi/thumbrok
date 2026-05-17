@@ -7,3 +7,7 @@ __pycache__
 *_*.json
 *.srt
 *.vtt
+*.jpg
+*.png
+frames/
+generated_images/

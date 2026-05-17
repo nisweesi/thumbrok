@@ -30,7 +30,11 @@ def moments_generator(transcript_json):
 
     chat.append(system(PROMPT))
     response = chat.sample()
+    raw_content = json.loads(response.content)
 
-    raw_content = response.content
+    file_name = f"{transcript_json['filename']}_moments.json"
 
-    print(json.loads(raw_content))
+    with open(f"{file_name}", "w", encoding="utf-8") as f:
+        json.dump(raw_content, f, ensure_ascii=False, indent=2)
+
+    return file_name

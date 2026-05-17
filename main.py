@@ -1,5 +1,6 @@
 from transcript import transcribe
 from grok import moments_generator
+from moments_snipped import take_snippets
 
 
 def main():
@@ -9,7 +10,8 @@ def main():
         raise ValueError("Enter a video name")
 
     transcription = transcribe(video_name)
-    moments_generator(transcription)
+    transcription_json = moments_generator(transcription)
+    take_snippets(transcription_json, video_name)
 
 
 if __name__ == "__main__":

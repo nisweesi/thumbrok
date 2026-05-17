@@ -11,3 +11,4 @@ __pycache__
 *.png
 frames/
 generated_images/
+.vscode

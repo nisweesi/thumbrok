@@ -8,7 +8,7 @@ import json
 def transcribe(filename: str):
     model = whisper.load_model("base")
 
-    result = model.transcribe(filename, language="en")
+    result = model.transcribe(filename, language="en", fp16=False)
 
     subs = []
     segments = []

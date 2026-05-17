@@ -25,7 +25,7 @@ class TranscriptionFormat(BaseModel):
 class Moment(BaseModel):
     start: float = Field(..., description="Start time of the moment in seconds")
     end: float = Field(..., description="End time of the moment in seconds")
-    description: str = Field(
+    content: str = Field(
         ..., description="Brief description or rationale for the selected moment"
     )
 

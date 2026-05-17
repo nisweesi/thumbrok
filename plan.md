@@ -1,6 +1,15 @@
 # Thmbnail
 ## to end up with a functional product (MVP)
 
+1. transcribe, english
+2. timestamps
+3. Whisper OpenAI
+4. JSON and srt
+5. JSON Grok -> 5 moments -> 5 moments (via transcription)
+6. ffmpeg (assembly) -> (12:13 - 12: 40) -> (13+40)//2= 26
+7. Grok 4.3 -> json
+8. Grok Imagine -> thumbnails
+
 ## create the main business logic
 
 [X] transcripe a video with timestamp using whisper

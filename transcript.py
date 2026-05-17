@@ -1,50 +1,61 @@
 # transcript service
-import whisper
-from datetime import timedelta, datetime
-import srt
 import json
+import os
+
+import whisper
+from datetime import timedelta
+import srt
+
+from models import TranscriptionFormat, Segment
 
 
-def transcribe(filename: str):
+def transcribe_video(
+    filename: str, output_dir: str = "generated_transcript", lang: str = "en"
+) -> TranscriptionFormat:
     model = whisper.load_model("base")
 
-    result = model.transcribe(filename, language="en", fp16=False)
+    result = model.transcribe(filename, language=lang, fp16=False)
 
-    subs = []
+    subtitle = []
     segments = []
 
     for i, seg in enumerate(result["segments"]):
-        segment = {
-            "index": i + 1,
-            "start": round(seg["start"], 3),
-            "end": round(seg["start"], 3),
-            "content": seg["text"],
-        }
+        segments.append(
+            Segment(
+                index=i + 1,
+                start=round(seg["start"], 3),
+                end=round(seg["end"], 3),
+                content=seg["text"].strip(),
+            )
+        )
 
-        segments.append(segment)
-
-        subs.append(
+        subtitle.append(
             srt.Subtitle(
                 index=i + 1,
                 start=timedelta(seconds=round(seg["start"], 3)),
                 end=timedelta(seconds=round(seg["end"], 3)),
-                content=segment["content"],
+                content=seg["text"],
             )
         )
 
     transcript_json = {
         "filename": filename,
-        "language": result.get("language"),
-        "content": result.get("text", "").strip(),
+        "language": lang,
         "segments": segments,
     }
 
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    transcript = TranscriptionFormat.model_validate(transcript_json)
 
-    with open(f"{filename}_{timestamp}.srt", "w", encoding="utf-8") as f:
-        f.write(srt.compose(subs))
+    os.makedirs(output_dir, exist_ok=True)
 
-    with open(f"{filename}_{timestamp}.json", "w", encoding="utf-8") as f:
-        json.dump(result, f, ensure_ascii=False, indent=2)
+    base_name = os.path.splitext(os.path.basename(filename))[0]
 
-    return transcript_json
+    generated_filename = os.path.join(output_dir, f"generated_transcript_{base_name}")
+
+    with open(f"{generated_filename}.srt", "w", encoding="utf-8") as f:
+        f.write(srt.compose(subtitle))
+
+    with open(f"{generated_filename}.json", "w", encoding="utf-8") as f:
+        json.dump(transcript.model_dump(), f, ensure_ascii=False, indent=2)
+
+    return transcript

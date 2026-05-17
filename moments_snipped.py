@@ -1,7 +1,7 @@
 import subprocess
 from pathlib import Path
 
-from models import MomentWithImage
+from models import MomentWithImage, MomentsResponseFormat
 
 
 def take_snippet(start: float, end: float, filename: str) -> str:
@@ -43,7 +43,9 @@ def take_snippet(start: float, end: float, filename: str) -> str:
 
 
 # loop through the json and take a sinppet in the middle second between the start and end point
-def take_snippets(moments_response, filename: str) -> list[MomentWithImage]:
+def take_snippets(
+    moments_response: MomentsResponseFormat, filename: str
+) -> list[MomentWithImage]:
     """
     Given a moments JSON (path or dict) and a video filename,
     extract one screenshot per moment at the midpoint time.

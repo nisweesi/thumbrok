@@ -16,7 +16,6 @@ class TranscriptionFormat(BaseModel):
 
     filename: str = Field(..., description="Original video filename")
     language: str = Field(..., description="Language code of the transcript")
-    text: str = Field(..., description="Full concatenated transcript text")
     segments: List[Segment] = Field(
         ..., description="List of segmented transcripts with timestamps"
     )
@@ -53,7 +52,8 @@ class MomentWithImage(BaseModel):
     reason: str
     image_path: str
     thumbnail_text: str = Field(
-        ..., description="Short thumbnail text for the thumbnail"
+        ...,
+        description="Short thumbnail text for the thumbnail (no exageration, and maximum 8 words total)",
     )
     visual_idea: str = Field(
         ..., description="Suggested visual direction for the thumbnail"
